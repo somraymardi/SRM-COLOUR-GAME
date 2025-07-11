@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SRM Game - Add Money</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f4f8;
+    margin: 0; padding: 20px;
+  }
+  .container {
+    max-width: 400px;
+    background: white;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  input[type="number"] {
+    width: 80%;
+    padding: 10px;
+    font-size: 18px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1.8px solid #ccc;
+  }
+  button {
+    padding: 12px 20px;
+    font-size: 18px;
+    background: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #155ab6;
+  }
+  #msg {
+    margin-top: 15px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <h2>Add Money to Wallet</h2>
+  <p>Current Wallet Balance: ₹<span id="walletBalance">0</span></p>
+
+  <input type="number" id="addAmount" placeholder="Enter amount to add" min="1" />
+  <br />
+  <button onclick="addMoney()">Add Money</button>
+  <p id="msg"></p>
+
+  <br />
+  <button onclick="goBack()">Back to Game</button>
+</div>
+
+<script>
+  let user = null;
+  window.onload = function() {
+    let currentUser = sessionStorage.getItem('currentUser');
+    if (!currentUser) {
+      window.location.href = 'index.html';
+      return;
+    }
+    let userData = localStorage.getItem('user_' + currentUser);
+    if (!userData) {
+      window.location.href = 'index.html';
+      return;
+    }
+    user = JSON.parse(userData);
+    document.getElementById('walletBalance').textContent = user.wallet.toFixed(2);
+  };
+
+  function addMoney() {
+    let amount = parseFloat(document.getElementById('addAmount').value);
+    let msg = document.getElementById('msg');
+
+    if (!user) return;
+
+    if (isNaN(amount) || amount <= 0) {
+      msg.style.color = 'red';
+      msg.textContent = 'Please enter a valid amount';
+      return;
+    }
+
+    user.wallet += amount;
+    localStorage.setItem('user_' + sessionStorage.getItem('currentUser'), JSON.stringify(user));
+    document.getElementById('walletBalance').textContent = user.wallet.toFixed(2);
+
+    msg.style.color = 'green';
+    msg.textContent = `₹${amount.toFixed(2)} added successfully!`;
+    document.getElementById('addAmount').value = '';
+  }
+
+  function goBack() {
+    window.location.href = 'game.html';
+  }
+</script>
+
+</body>
+</html>
